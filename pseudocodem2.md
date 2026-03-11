@@ -66,4 +66,5 @@ PROGRAM Simulasi_Osilator_Harmonik
     For each dt, err in zip(dtArray, max_errors):
         Cetak dt dan err dengan format yang rapi
 
+
 END PROGRAM
