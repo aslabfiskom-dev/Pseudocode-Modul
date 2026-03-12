@@ -1,0 +1,53 @@
+----------------------------------------------------------------
+ ALGORITHM 1: SIMULATE(dt)
+----------------------------------------------------------------
+INPUT  : dt (time step)
+OUTPUT : arrays t, NA, NB
+ 
+1. SET tauA = 1, tauB = 2
+2. SET NA0 = 100, NB0 = 100, tMax = 10
+3. BUILD t = [0, dt, 2*dt, ..., tMax]
+4. INIT NA[0] = NA0, NB[0] = NB0
+ 
+5. FOR i = 0 TO len(t) - 2 DO
+       NA[i+1] = NA[i] - NA[i] * dt / tauA
+       NB[i+1] = NB[i] + (NA[i] / tauA - NB[i] / tauB) * dt
+   END FOR
+ 
+6. RETURN t, NA, NB
+ 
+----------------------------------------------------------------
+ ALGORITHM 2: MAIN SIMULATION
+----------------------------------------------------------------
+1. SET dt = 0.01
+2. CALL (t, NA, NB) = SIMULATE(dt)
+3. PLOT NA vs t  (red dashed)
+4. PLOT NB vs t  (blue solid)
+ 
+----------------------------------------------------------------
+ ALGORITHM 3: CONVERGENCE STUDY
+----------------------------------------------------------------
+INPUT  : list of dt values, dt_ref (finest reference step)
+OUTPUT : log-log plot of Error vs dt
+ 
+1. SET dt_ref = 1e-5
+2. CALL (t_ref, NA_ref, NB_ref) = SIMULATE(dt_ref)
+ 
+3. SET dt_list = [0.5, 0.2, 0.1, 0.05, 0.01, 0.005]
+4. INIT errors = []
+ 
+5. FOR EACH dt_i IN dt_list DO
+ 
+       a. CALL (t_i, NA_i, NB_i) = SIMULATE(dt_i)
+ 
+       b. INTERPOLATE NB_ref onto grid t_i
+          -> NB_ref_interp
+ 
+       c. COMPUTE err = MAX | NB_i - NB_ref_interp |
+ 
+       d. APPEND err TO errors
+ 
+   END FOR
+ 
+6. PLOT log(errors) vs log(dt_list)          [numerical error]
+7. PLOT reference line O(dt) slope = 1       [expected order]
