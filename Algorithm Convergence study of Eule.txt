@@ -1,0 +1,51 @@
+Algorithm: Convergence study of Euler method for harmonic oscillator using finest grid as reference
+
+Input:
+  ω        - angular frequency
+  x₀, v₀   - initial position and velocity
+  T        - total simulation time
+  dt_list  - list of time step sizes to test (e.g., [0.1, 0.05, 0.025, 0.0125, …])
+             Must contain at least two values; the smallest dt will be used as the reference grid.
+
+Output:
+  dt_values, error_values - arrays for plotting error vs. dt (excluding the reference dt)
+  convergence_rate        - estimated order of accuracy
+
+Steps:
+1.  Sort dt_list in ascending order.  // dt_list[0] is the smallest (reference grid)
+2.  Set dt_ref = dt_list[0]
+3.  // --- Compute reference solution at final time T using dt_ref ---
+    N_ref = round(T / dt_ref)                     // number of steps for reference
+    Declare arrays x_ref[0..N_ref], v_ref[0..N_ref]
+    x_ref[0] = x₀
+    v_ref[0] = v₀
+    For n = 0 to N_ref - 1:
+        x_ref[n+1] = x_ref[n] + dt_ref * v_ref[n]
+        v_ref[n+1] = v_ref[n] - dt_ref * ω² * x_ref[n]
+    End For
+    x_ref_final = x_ref[N_ref]
+
+4.  Initialize empty lists dt_values and error_values.
+
+5.  For each dt in dt_list[1:]:               // skip the reference dt
+        N = round(T / dt)                      // number of steps for this dt
+        Declare arrays x[0..N], v[0..N]
+        x[0] = x₀
+        v[0] = v₀
+
+        For n = 0 to N - 1:
+            x[n+1] = x[n] + dt * v[n]
+            v[n+1] = v[n] - dt * ω² * x[n]
+        End For
+
+        err = |x[N] - x_ref_final|             // error at final time
+        Append dt to dt_values
+        Append err to error_values
+    End For
+
+6.  Plot error_values vs dt_values on a log‑log scale.
+
+7.  Fit a line to log(error_values) vs log(dt_values) to obtain slope (convergence rate).
+    // Theoretically, Euler method is first‑order, so slope should be close to 1.
+
+8.  Output dt_values, error_values, and convergence_rate.
